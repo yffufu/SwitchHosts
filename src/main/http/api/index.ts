@@ -12,6 +12,7 @@ import off from './off'
 import on from './on'
 import active from './active'
 import test from './test'
+import op from './op'
 
 const router = express.Router()
 
@@ -20,6 +21,7 @@ router.get('/toggle', toggle)
 router.post('/add', add)
 router.post('/off', off)
 router.post('/on', on)
+router.post('/op', op)
 router.get('/active', active)
 router.get('/test', test)
 

@@ -26,7 +26,7 @@ export async function switchState(req: Request, res: Response, flag = true) {
         item.on !== flag,
     )
     const ids = items.map((item) => item.id)
-    ids.length && broadcast(events.toggle_item_batch, ids, flag)
+    ids.length && broadcast(events.toggle_item_batch, ids, items.map(() => flag))
   } catch (e) {
     console.log('err', e)
     res.end('error')

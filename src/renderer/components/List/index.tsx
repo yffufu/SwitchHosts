@@ -79,20 +79,20 @@ const List = (props: Props) => {
       agent.broadcast(events.set_hosts_on_status, id, !on)
     }
   }
-  const onToggleItemBatch = async (ids: string[], on: boolean) => {
+  const onToggleItemBatch = async (ids: string[], ons: boolean[]) => {
     console.log(`writeMode: ${configs?.write_mode}`)
-    console.log(`toggle hosts #${ids.join(', ')} as ${on ? 'on' : 'off'}`)
+    console.log(`toggle hosts #${ids.join(', ')} as ${ons.map((o) => o? 'on' : 'off').join(', ')}`)
 
     if (!configs?.write_mode) {
-      ids.forEach((id) => agent.broadcast(events.show_set_write_mode, { id, on }))
+      ids.forEach((id,i) => agent.broadcast(events.show_set_write_mode, { id, on: ons[i]}))
       return
     }
 
-    const new_list = ids.reduce((prev, id) => {
+    const new_list = ids.reduce((prev, id, i) => {
       prev = setOnStateOfItem(
         prev,
         id,
-        on,
+        ons[i],
         configs?.choice_mode ?? 0,
         configs?.multi_chose_folder_switch_all ?? false,
       )
@@ -106,9 +106,9 @@ const List = (props: Props) => {
         description: lang.success,
         isClosable: true,
       })
-      ids.forEach((id) => agent.broadcast(events.set_hosts_on_status, id, on))
+      ids.forEach((id, i) => agent.broadcast(events.set_hosts_on_status, id, ons[i]))
     } else {
-      ids.forEach((id) => agent.broadcast(events.set_hosts_on_status, id, !on))
+      ids.forEach((id, i) => agent.broadcast(events.set_hosts_on_status, id, !ons[i]))
     }
   }
 
