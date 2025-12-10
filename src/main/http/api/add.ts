@@ -14,12 +14,12 @@ const add = async (req: Request, res: Response) => {
   const body = req.body as {
     id: string
     title: string
-    eos_port: string
+    meta: object
     content: string
   }
   try {
     let list = await getList()
-    let { title, content, id, eos_port } = body
+    let { title, content, id, meta } = body
     let item = findItemById(list, id)
     let activeid
     if (item) {
@@ -27,7 +27,7 @@ const add = async (req: Request, res: Response) => {
       activeid = item.id
     } else {
       await setHostsContent(id, content)
-      list.push({id, title, type: 'local', on: false, eos_port})
+      list.push({id, title, type: 'local', on: false, meta})
       await setList(list)
       activeid = id
     }
