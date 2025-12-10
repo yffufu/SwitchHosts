@@ -13,16 +13,20 @@ export async function switchState(req: Request, res: Response, flag = true) {
   const body = req.body as {
     id?: string
     test?: string
+    exclude?: string[]
   }
   try {
-    const { id, test } = body
+    const { id, test, exclude } = body
     let list = await getList()
-    const items = list
-    .filter((item) => (id ? item.id === id : item.id.includes(test!)) && item.on !== flag);
-    for(let item of items){
-        await new Promise(resolve => setTimeout(resolve, 50));
-        broadcast(events.toggle_item, item.id, flag)
-    }
+    const items = list.filter(
+      (item) =>
+        (id
+          ? item.id === id
+          : item.id.includes(test!) && (exclude ? !exclude.includes(item.id!) : true)) &&
+        item.on !== flag,
+    )
+    const ids = items.map((item) => item.id)
+    ids.length && broadcast(events.toggle_item_batch, ids, flag)
   } catch (e) {
     console.log('err', e)
     res.end('error')
