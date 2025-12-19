@@ -73,3 +73,38 @@ npm run make # the packed files will be in ./dist
 ## Copyright
 
 SwitchHosts is a free and open source software, it is released under the [Apache License](./LICENSE).
+
+
+## new http api
+
+### POST /api/add
+request body:
+```js
+{
+  id: "xxxx",
+  title: "xxxx",
+  content: "xxxx" // hosts content,
+  meta: {} // extra meta info, optional
+}
+```
+
+### POST /api/op
+
+request body:
+```js
+[{
+  op: "off", // "on"|"off" , to switch host state
+  id: "xxx", // host id, optional
+  test: "xxxx", // match id or title, optional, test sub str,  not support regex
+  exclude: ['id'] //  exclude for op, id list
+},{
+    op: "on",
+  id: "xxx", 
+  test: "xxxx",
+  exclude: ['id'] 
+},...]
+```
+
+### GET /api/test check is connection, return 'ok' if success.
+
+### GET /api/active active switchhost app main window, return 'ok' if success.

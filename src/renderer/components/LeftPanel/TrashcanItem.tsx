@@ -28,6 +28,15 @@ const TrashcanItem = (props: Props) => {
     console.log(i)
   }
 
+  const onClear = (i: any) => {
+    if (confirm(lang.trashcan_clear_confirm)) {
+      actions
+        .clearTrashcan()
+        .then(loadHostsData)
+        .catch((e) => console.error(e))
+    }
+  }
+
   const menu_for_all = new PopupMenu([
     {
       label: lang.trashcan_clear,
@@ -81,8 +90,8 @@ const TrashcanItem = (props: Props) => {
         e.stopPropagation()
       }}
     >
-      <div className={styles.title} onClick={onSelect}>
-        <span className={list_item_styles.icon}>
+      <div className={styles.title} >
+        <span className={list_item_styles.icon}  onClick={onClear}>
           <ItemIcon type={data.type} is_collapsed={true} />
         </span>
 

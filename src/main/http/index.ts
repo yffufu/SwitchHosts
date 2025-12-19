@@ -25,6 +25,31 @@ app.get('/', (req, res) => {
   res.send('Hello SwitchHosts!')
 })
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Authorization,X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method',
+  )
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PATCH, PUT, DELETE')
+  res.header('Allow', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
+  next()
+})
+
+app.use((req, res, next) => {
+  if (req.method === 'POST' && req.headers['content-type'] === 'application/json') {
+    let body: any[] = []
+    req.on('data', (chunk) => {
+      body.push(chunk)
+    })
+    req.on('end', () => {
+      req.body = JSON.parse(Buffer.concat(body).toString());
+      next()
+    })
+  } else {
+    next()
+  }
+})
 app.get('/remote-test', (req, res) => {
   res.send(`# remote-test\n# ${new Date().toString()}`)
 })

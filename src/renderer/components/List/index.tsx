@@ -79,6 +79,38 @@ const List = (props: Props) => {
       agent.broadcast(events.set_hosts_on_status, id, !on)
     }
   }
+  const onToggleItemBatch = async (ids: string[], ons: boolean[]) => {
+    console.log(`writeMode: ${configs?.write_mode}`)
+    console.log(`toggle hosts #${ids.join(', ')} as ${ons.map((o) => o? 'on' : 'off').join(', ')}`)
+
+    if (!configs?.write_mode) {
+      ids.forEach((id,i) => agent.broadcast(events.show_set_write_mode, { id, on: ons[i]}))
+      return
+    }
+
+    const new_list = ids.reduce((prev, id, i) => {
+      prev = setOnStateOfItem(
+        prev,
+        id,
+        ons[i],
+        configs?.choice_mode ?? 0,
+        configs?.multi_chose_folder_switch_all ?? false,
+      )
+      return prev
+    }, hosts_data.list)
+    console.log('new_list', new_list)
+    let success = await writeHostsToSystem(new_list)
+    if (success) {
+      toast({
+        status: 'success',
+        description: lang.success,
+        isClosable: true,
+      })
+      ids.forEach((id, i) => agent.broadcast(events.set_hosts_on_status, id, ons[i]))
+    } else {
+      ids.forEach((id, i) => agent.broadcast(events.set_hosts_on_status, id, !ons[i]))
+    }
+  }
 
   const writeHostsToSystem = async (
     list?: IHostsListObject[],
@@ -134,6 +166,7 @@ const List = (props: Props) => {
 
   if (!is_tray) {
     useOnBroadcast(events.toggle_item, onToggleItem, [hosts_data, configs])
+    useOnBroadcast(events.toggle_item_batch, onToggleItemBatch, [hosts_data, configs])
     useOnBroadcast(events.write_hosts_to_system, writeHostsToSystem, [hosts_data])
   } else {
     useOnBroadcast(events.tray_list_updated, loadHostsData)

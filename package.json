@@ -39,7 +39,7 @@
     "@electron/notarize": "^2.3.2",
     "@emotion/react": "11.13.0",
     "@emotion/styled": "11.13.0",
-    "@tabler/icons-react": "3.11.0",
+    "@tabler/icons-react": "^3.11.0",
     "@types/assert": "1.5.10",
     "@types/codemirror": "5.60.15",
     "@types/express": "4.17.21",
