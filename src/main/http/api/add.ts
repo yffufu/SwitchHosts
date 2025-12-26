@@ -25,14 +25,18 @@ const add = async (req: Request, res: Response) => {
     if (item) {
       await setHostsContent(item.id, content)
       activeid = item.id
+      broadcast(events.hosts_refreshed_by_id, activeid)
+      if(item.on){
+        broadcast(events.toggle_item, item.id, true)
+      }
     } else {
       await setHostsContent(id, content)
       list.push({id, title, type: 'local', on: false, meta})
       await setList(list)
       activeid = id
+      broadcast(events.hosts_refreshed_by_id, activeid)
+      broadcast(events.reload_list)
     }
-    broadcast(events.hosts_refreshed_by_id, activeid)
-    broadcast(events.reload_list)
   } catch (e) {
     console.log('err', e)
     res.end('error')
